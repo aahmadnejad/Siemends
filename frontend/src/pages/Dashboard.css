@@ -1,0 +1,67 @@
+@reference "../index.css";
+
+.dashboard-wrapper { 
+  @apply space-y-6 flex flex-col h-screen p-6 bg-slate-950 overflow-hidden; 
+}
+
+.filter-glass-panel { @apply bg-slate-900/40 border border-slate-800 p-5 rounded-2xl space-y-5 backdrop-blur-md; }
+.search-row { @apply flex items-center gap-4; }
+.cyber-search-container { @apply flex-1 flex items-center bg-slate-950 border border-slate-800 rounded-xl px-4 py-1 transition-all focus-within:border-sky-600; }
+.cyber-search-container input { @apply flex-1 bg-transparent border-none py-2 text-sm text-slate-200 outline-none; }
+.assignment-pills { @apply flex items-center gap-2; }
+.pill { @apply flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-800 text-[10px] font-bold text-slate-600 transition-all; }
+.pill.active { @apply border-sky-500 bg-sky-500/10 text-sky-400; }
+.reset-btn { @apply p-2.5 rounded-xl border border-slate-800 text-slate-500 hover:bg-red-500/10 hover:text-red-400; }
+.filter-row-bottom { @apply flex items-center justify-between; }
+.time-range-group { @apply flex items-center gap-2 bg-slate-950/40 border border-slate-800 p-1.5 rounded-xl; }
+.time-input input { @apply bg-transparent border-none text-[10px] text-slate-300 outline-none; }
+.cyber-select { @apply bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-400 outline-none focus:border-sky-500 cursor-pointer; }
+
+.stats-grid { @apply grid grid-cols-1 md:grid-cols-5 gap-4; }
+.stat-card { @apply bg-slate-900/40 border border-slate-800 p-5 rounded-2xl flex items-center justify-between cursor-pointer transition-all; }
+.stat-card.active { @apply border-sky-500 bg-sky-950/40 ring-1 ring-sky-500; }
+.stat-card.crit.active { @apply border-red-500 bg-red-950/40 ring-1 ring-red-500; }
+.stat-info p { @apply text-[10px] text-slate-500 font-bold uppercase mb-1; }
+.stat-info h3 { @apply text-2xl font-bold text-white; }
+
+.main-split-view { @apply flex flex-1 gap-6 overflow-hidden mt-4 h-full; }
+.alerts-list-column { @apply w-[400px] overflow-y-auto pr-3 flex flex-col gap-3 h-full; }
+
+.alert-job-card { @apply bg-slate-900/30 border border-slate-800 p-4 rounded-xl cursor-pointer transition-all hover:bg-slate-900/60; }
+.alert-job-card.active { @apply border-sky-600 bg-sky-900/20 ring-1 ring-sky-600/40; }
+
+.alert-job-card.severity-critical { @apply border-l-4 border-l-red-600; }
+.alert-job-card.severity-high { @apply border-l-4 border-l-orange-600; }
+.alert-job-card.severity-medium { @apply border-l-4 border-l-yellow-500; }
+.alert-job-card.severity-low { @apply border-l-4 border-l-blue-600; }
+
+.card-header { @apply flex justify-between items-center mb-1; }
+.card-time { @apply text-[10px] text-slate-600 flex items-center gap-1; }
+.card-title { @apply text-sm font-bold text-slate-200 mb-2 leading-snug; }
+
+.card-meta { @apply flex flex-col gap-2 mb-4; }
+.mini-ip-pathway { @apply flex items-center gap-2; }
+.mini-ip-pathway .src { @apply text-[11px] text-slate-200 font-mono; }
+.mini-ip-pathway .dst { @apply text-[11px] text-slate-500 font-mono; }
+.path-arrow { @apply text-slate-700; }
+
+.user-tag-mini { @apply self-start flex items-center gap-1.5 bg-slate-800/40 px-2 py-0.5 rounded text-[10px] text-slate-400; }
+
+.status-pill { @apply flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-500; }
+.status-dot { @apply w-1.5 h-1.5 rounded-full; }
+.status-dot.OPEN { @apply bg-emerald-500; }
+.status-dot.INVESTIGATING { @apply bg-amber-500; }
+.status-dot.CLOSED { @apply bg-slate-600; }
+
+.alert-detail-pane { @apply flex-1 bg-slate-900/20 border border-slate-800 rounded-3xl overflow-y-auto h-full relative; }
+
+.badge { @apply px-2.5 py-1 rounded border text-[9px] font-black uppercase tracking-wider; }
+.badge-critical { @apply border-red-600 text-red-500; }
+.badge-high { @apply border-orange-500 text-orange-500; }
+.badge-medium { @apply border-yellow-500 text-yellow-500; }
+.badge-low { @apply border-blue-600 text-blue-500; }
+.mono { @apply font-mono; }
+
+.toast-box { @apply fixed bottom-8 right-8 flex items-center gap-3 px-6 py-4 rounded-2xl border bg-slate-900 border-slate-800 shadow-2xl transition-all duration-300 z-50; }
+.toast-box.error { @apply text-red-400 border-red-500; }
+.toast-box.success { @apply text-emerald-400 border-emerald-500; }

@@ -1,0 +1,222 @@
+services:
+
+#####rabbit/database
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    secrets:
+      - rabbit_pass
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      siem-lab:
+        ipv4_address: 172.18.0.200
+
+  db:
+    image: timescale/timescaledb:latest-pg16
+    container_name: siem-db
+    secrets:
+      - db_pass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_pass
+    networks:
+      - siem-lab
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  ollama:
+    image: ollama/ollama
+    container_name: siem-local-ai
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - siem-lab
+    entrypoint: /bin/sh
+    command: -c "ollama serve & sleep 10 && ollama pull qwen2.5:3b && wait"    ### phi3:mini
+
+  ollama-analyzer:
+    build: ./backend
+    container_name: siem-ollama-analyzer
+    command: python analyzer/ollama_brain.py
+    environment:
+      - PYTHONUNBUFFERED=1
+    secrets:
+      - db_pass
+    networks:
+      - siem-lab
+    depends_on:
+      db:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+
+  # gemini-analyzer:
+  #   build: ./backend
+  #   command: python analyzer/gemini_brain.py
+  #   environment:
+  #     - GEMINI_API_KEY=${GEMINI_API_KEY}
+  #     - PYTHONUNBUFFERED=1
+  #   secrets:
+  #     - db_pass
+  #   networks:
+  #     - siem-lab
+  #   depends_on:
+  #     - db
+
+
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n-automator
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD_FILE=/run/secrets/db_pass 
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - N8N_ENCRYPTION_KEY=amir_siem_2026
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=siem-db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=postgres
+      - DB_POSTGRESDB_USER=postgres
+      - DB_POSTGRESDB_PASSWORD_FILE=/run/secrets/db_pass
+    secrets:
+      - db_pass
+      - telegram_token
+      - jira_token
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+    networks:
+      - siem-lab
+
+###### backend
+
+  ingestor-packets:
+    build: ./backend
+    command: python ingestor/main.py --mode packets
+    environment:
+      - PYTHONUNBUFFERED=1
+    deploy:
+      replicas: 2
+    secrets: [db_pass]
+    networks: [siem-lab]
+
+  ingestor-alerts:
+    build: ./backend
+    command: python ingestor/main.py --mode alerts
+    environment:
+      - PYTHONUNBUFFERED=1
+    secrets: [db_pass]
+    networks: [siem-lab]
+
+  analyzer:
+    build: ./backend
+    container_name: siem-analyzer
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - db
+    secrets:
+      - db_pass
+    networks:
+      - siem-lab
+    command: python analyzer/main.py
+
+
+  api:
+    build: ./backend/api
+    container_name: siem-api
+    ports: 
+    - "8000:8000"
+    environment:
+      - DB_HOST=siem-db
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASS_FILE=/run/secrets/db_pass
+      - PYTHONUNBUFFERED=1
+    secrets:
+      - db_pass
+    depends_on:
+      - db
+    networks:
+      - siem-lab
+
+
+
+###front
+  dashboard:
+    build: ./frontend
+    container_name: siem-dashboard
+    ports:
+      - "3000:80"
+    networks:
+      - siem-lab
+    depends_on:
+      - api
+#####
+
+
+########
+  pc-alpha:
+    image: python:3.11-slim
+    container_name: pc-alpha
+    cap_add: [NET_ADMIN]
+    networks: [siem-lab]
+    volumes:
+      - ./sniffer:/app
+    working_dir: /app
+    command: bash -c "pip install scapy pika && python agent.py"
+
+  pc-beta:
+    image: python:3.11-slim
+    container_name: pc-beta
+    cap_add: [NET_ADMIN]
+    networks: [siem-lab]
+    volumes:
+      - ./sniffer:/app
+    working_dir: /app
+    command: bash -c "pip install scapy pika && python agent.py"
+
+  attacker:
+    image: ubuntu:latest
+    container_name: pc-attacker
+    networks: [siem-lab]
+    command: bash -c "apt-get update && apt-get install -y iputils-ping net-tools nmap curl && tail -f /dev/null"
+######
+
+
+secrets:
+  db_pass:
+    file: ./secrets/db_pass.txt
+  rabbit_pass:
+    file: ./secrets/rabbit_pass.txt
+  telegram_token:
+    file: ./secrets/telegram_token.txt
+  jira_token:
+    file: ./secrets/jira_token.txt
+
+networks:
+  siem-lab:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+
+
+volumes:
+  n8n_data:
+  ollama_data:

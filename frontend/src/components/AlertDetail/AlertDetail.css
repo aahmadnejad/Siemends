@@ -1,0 +1,98 @@
+@reference "../../index.css";
+
+.detail-container {
+  @apply h-full flex flex-col p-10 overflow-y-auto;
+}
+
+.detail-header-section {
+  @apply border-b border-slate-800 pb-8 mb-8;
+}
+
+.header-main {
+  @apply flex justify-between items-start mb-6;
+}
+
+.header-main h2 {
+  @apply text-3xl font-black text-white tracking-tight;
+}
+
+/* IP Pathway Bar */
+.ip-pathway-bar {
+  @apply flex items-center gap-10 bg-slate-900/60 p-5 rounded-2xl border border-slate-800/50 mb-4;
+}
+
+.ip-group {
+  @apply flex flex-col gap-1;
+}
+
+.ip-group label {
+  @apply text-[8px] font-black text-slate-600 uppercase tracking-[0.2em];
+}
+
+.ip-val {
+  @apply font-mono text-sm font-bold;
+}
+
+.ip-val.src { @apply text-red-400; }
+.ip-val.dst { @apply text-sky-400; }
+
+.path-arrow { @apply text-slate-700; }
+
+.detail-timestamp {
+  @apply flex items-center gap-2 text-xs text-slate-500 font-medium;
+}
+
+.dev-notify-pill {
+  @apply text-[9px] font-black uppercase px-2.5 py-1 rounded bg-slate-800 text-slate-600 border border-transparent transition-all;
+}
+
+.dev-notify-pill.yes {
+  @apply bg-sky-500/10 text-sky-400 border-sky-500/20;
+}
+
+/* Actions Row */
+.detail-actions-row {
+  @apply flex gap-6 pb-10;
+}
+
+.action-field {
+  @apply flex-1 flex flex-col gap-2;
+}
+
+.action-field label {
+  @apply text-[10px] font-black uppercase tracking-widest text-slate-600;
+}
+
+.action-select {
+  @apply bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-300 outline-none transition-all focus:border-sky-500 cursor-pointer;
+}
+
+/* Empty State Helper */
+.empty-detail {
+  @apply flex flex-col items-center justify-center h-full text-center text-slate-800;
+}
+
+
+.alert-detail-inner { @apply p-10 flex flex-col; }
+
+.header-flex { @apply flex justify-between items-start mb-6; }
+.header-flex h2 { @apply text-3xl font-black text-white tracking-tight; }
+
+.ip-info-bar { @apply flex items-center gap-8 mb-4 bg-slate-900/40 p-5 rounded-2xl border border-slate-800/50; }
+.ip-block { @apply flex flex-col; }
+.ip-block label { @apply text-[8px] uppercase font-black text-slate-600 tracking-widest mb-1; }
+.ip-block span { @apply font-mono text-sm; }
+.ip-divider { @apply text-slate-700 font-bold; }
+
+.detail-subtitle { @apply text-xs text-slate-500 mb-8 font-medium; }
+.dev-notify { @apply text-[9px] font-black uppercase px-2 py-1 rounded bg-slate-800 text-slate-600; }
+.dev-notify.yes { @apply bg-sky-500/10 text-sky-400; }
+
+.detail-actions { @apply flex gap-6 pb-8 border-b border-slate-800/50 mb-8; }
+.action-item { @apply flex-1 flex flex-col gap-2; }
+.action-item label { @apply text-[10px] font-black uppercase tracking-widest text-slate-600; }
+.status-select-action { @apply bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-300 outline-none focus:border-sky-500; }
+
+.raw-details-section { @apply mb-10; }
+.section-title { @apply flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 mb-4; }
+.json-container { @apply bg-slate-950/60 p-6 rounded-2xl border border-slate-800/50 text-[10px] text-emerald-500 font-mono overflow-x-auto; }
